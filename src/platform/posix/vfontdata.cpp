@@ -49,8 +49,8 @@ bool LoadVFontDataFrom32BitTGA(FileImageStream *fp, VFontData *pData)
 					if (pInLine[x*4+0] != 0 || pInLine[x*4+1] != 0 || pInLine[x*4 +2] != 0 || pInLine[x*4+2] != 0)
 					{
 						pOutLine[x] = 1;
-						if (x > rightX)
-							rightX = x;
+						if (x + 1 > rightX)
+							rightX = x + 1;
 					}
 					else
 						pOutLine[x] = 0;
