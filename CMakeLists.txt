@@ -1,30 +1,54 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.10)
 project(vgui_dll)
 
 set(VGUI_LIB vgui)
 
 file(GLOB_RECURSE VGUI_SRC "src/vgui/*.cpp")
 file(GLOB_RECURSE VGUI_WIN32_SRC "src/platform/win32/*.cpp")
-file(GLOB_RECURSE VGUI_LINUX_SRC "src/platform/linux/*.cpp")
+file(GLOB_RECURSE VGUI_POSIX_SRC "src/platform/posix/*.cpp")
+file(GLOB_RECURSE VGUI_APPLE_SRC "src/platform/apple/*.cpp")
 
 if(WIN32)
 	list(APPEND VGUI_SRC ${VGUI_WIN32_SRC})
-	include_directories("src/platform/win32")
+	include_directories("src/platform/posix" "src/platform/win32")
+
+	list(REMOVE_ITEM VGUI_POSIX_SRC
+			"${CMAKE_CURRENT_SOURCE_DIR}/src/platform/posix/App.cpp"
+			"${CMAKE_CURRENT_SOURCE_DIR}/src/platform/posix/Font.cpp"
+			"${CMAKE_CURRENT_SOURCE_DIR}/src/platform/posix/Surface.cpp"
+	)
+	list(APPEND VGUI_SRC ${VGUI_POSIX_SRC})
 else()
-	list(APPEND VGUI_SRC ${VGUI_LINUX_SRC})
-	include_directories("src/platform/linux")
+	list(APPEND VGUI_SRC ${VGUI_POSIX_SRC})
+	include_directories("src/platform/posix")
+
+	if(APPLE)
+		list(APPEND VGUI_SRC ${VGUI_APPLE_SRC})
+		include_directories("src/platform/apple")
+	endif()
 endif()
 
+list(APPEND VGUI_SRC "miniutl/utlmemory.cpp")
+
 if(NOT MSVC)
-	add_definitions(-D_LINUX)
-	add_definitions(-Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -D_vsnprintf=vsnprintf)
-	add_compile_options(-Wno-switch -Wno-implicit-exception-spec-mismatch -Wno-writable-strings)
+#	add_definitions(-DNDEBUG)
+	add_definitions(-Dstricmp=strcasecmp -D_vsnprintf=vsnprintf)
+#	add_compile_options(-Wno-switch -Wno-implicit-exception-spec-mismatch -Wno-writable-strings)
 endif()
 
 include_directories("include")
+include_directories("miniutl")
 
-if(ANDROID)
+if(ANDROID OR VGUI_STATIC)
 	add_library(${VGUI_LIB} STATIC ${VGUI_SRC})
 else()
 	add_library(${VGUI_LIB} SHARED ${VGUI_SRC})
+
+	install(TARGETS ${VGUI_LIB}
+			DESTINATION ".")
+
+	if(MSVC)
+		install(FILES $<TARGET_PDB_FILE:${VGUI_LIB}>
+				DESTINATION "." OPTIONAL)
+	endif()
 endif()

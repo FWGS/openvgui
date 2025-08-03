@@ -230,7 +230,7 @@ bool Surface::createPlat()
 	plat->isFullscreen = false;
 
 	::SetBkMode(plat->hdc, TRANSPARENT);
-	::SetWindowLong(plat->hwnd, GWL_USERDATA, (LONG)this);
+	::SetWindowLongPtr(plat->hwnd, GWLP_USERDATA, (LONG)this);
 	::SetTextAlign(plat->hdc, TA_LEFT | TA_TOP | TA_UPDATECP);
 
 	return true;
@@ -240,7 +240,7 @@ LRESULT CALLBACK staticProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	LRESULT ret = TRUE;
 
-	Surface *surface = (Surface *)GetWindowLong(hwnd, GWL_USERDATA);
+	Surface *surface = (Surface *)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
 	switch (msg)
 	{
