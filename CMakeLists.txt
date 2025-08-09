@@ -39,7 +39,7 @@ endif()
 include_directories("include")
 include_directories("miniutl")
 
-if(ANDROID OR VGUI_STATIC)
+if(VGUI_STATIC)
 	add_library(${VGUI_LIB} STATIC ${VGUI_SRC})
 else()
 	add_library(${VGUI_LIB} SHARED ${VGUI_SRC})
