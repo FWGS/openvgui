@@ -45,11 +45,9 @@ if(VGUI_STATIC)
 else()
 	add_library(vgui SHARED ${VGUI_SRC})
 
-	install(TARGETS ${VGUI_LIB}
-			DESTINATION ".")
+	install(TARGETS vgui DESTINATION ".")
 
 	if(MSVC)
-		install(FILES $<TARGET_PDB_FILE:${VGUI_LIB}>
-				DESTINATION "." OPTIONAL)
+		install(FILES $<TARGET_PDB_FILE:vgui> DESTINATION "." OPTIONAL)
 	endif()
 endif()
