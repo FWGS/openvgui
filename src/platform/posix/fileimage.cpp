@@ -98,7 +98,7 @@ bool Load32BitTGA(
 	TGAFileHeader hdr;
 	char dummyChar;
 	int i, x, y;
-	long color;
+	uint32_t color;
 	int runLength, curOut;
 	unsigned char *pLine;
 	unsigned char packetHeader;
@@ -140,7 +140,7 @@ bool Load32BitTGA(
 				fp->Read(&color, 4);
 				for(x=0; x < runLength; x++)
 				{
-					*((long*)pLine) = color;
+					memcpy(pLine, &color, sizeof(color));
 					pLine += 4;
 				}
 			}
@@ -149,7 +149,7 @@ bool Load32BitTGA(
 				for(x=0; x < runLength; x++)
 				{
 					fp->Read(&color, 4);
-					*((long*)pLine) = color;
+					memcpy(pLine, &color, sizeof(color));
 					pLine += 4;
 				}
 			}
@@ -188,8 +188,7 @@ void Save32BitTGA(
 		runStart = 0;
 		for(x=0; x < pImage->m_Width; x++)
 		{
-			if((x - runStart) >= 128 ||
-				*((long*)&pLine[runStart*4]) != *((long*)&pLine[x*4]))
+			if((x - runStart) >= 128 || memcmp( &pLine[runStart*4], &pLine[x*4], 4 ))
 			{
 				// Encode this  Run.
 				WriteRun(&pLine[runStart*4], fp, x - runStart);
