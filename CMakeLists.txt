@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(vgui_dll)
 
-set(VGUI_LIB vgui)
+option(VGUI_ALLOW_MALLOC_OVERRIDE "Enables global memory alloc operators replacement and vgui_setMalloc/vgui_setFree calls, like original VGUI" OFF)
+option(VGUI_STATIC "Compile vgui as static library, required for mods that integrate vgui_support" OFF)
 
 file(GLOB_RECURSE VGUI_SRC "src/vgui/*.cpp")
 file(GLOB_RECURSE VGUI_WIN32_SRC "src/platform/win32/*.cpp")
@@ -40,9 +41,9 @@ include_directories("include")
 include_directories("miniutl")
 
 if(VGUI_STATIC)
-	add_library(${VGUI_LIB} STATIC ${VGUI_SRC})
+	add_library(vgui STATIC ${VGUI_SRC})
 else()
-	add_library(${VGUI_LIB} SHARED ${VGUI_SRC})
+	add_library(vgui SHARED ${VGUI_SRC})
 
 	install(TARGETS ${VGUI_LIB}
 			DESTINATION ".")

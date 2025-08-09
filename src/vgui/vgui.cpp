@@ -38,6 +38,7 @@
 #include<stdarg.h>
 #include<VGUI.h>
 
+#ifdef VGUI_ALLOW_MALLOC_OVERRIDE
 static void*(*staticMalloc)(size_t size)=malloc;
 static void(*staticFree)(void* memblock)=free;
 
@@ -60,25 +61,30 @@ void operator delete [] (void *pMem)
 {
 	staticFree(pMem);
 }
+#endif
 
 void vgui_setMalloc(void *(*theMalloc)(size_t size))
 {
+#ifdef VGUI_ALLOW_MALLOC_OVERRIDE
 	if(theMalloc==null)
 	{
 		theMalloc=malloc;
 	}
 
 	staticMalloc=theMalloc;
+#endif
 }
 
 void vgui_setFree(void (*theFree)(void* memblock))
 {
+#ifdef VGUI_ALLOW_MALLOC_OVERRIDE
 	if(theFree==null)
 	{
 		theFree=free;
 	}
 
 	staticFree=theFree;
+#endif
 }
 
 namespace vgui
