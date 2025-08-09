@@ -10,6 +10,7 @@
 // $NoKeywords: $
 //=============================================================================
 
+#include <stdint.h>
 #include <string.h>
 #include "fileimage.h"
 
